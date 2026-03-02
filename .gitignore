@@ -1,3 +1,11 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
 Booksyard_Env/
-db.sqlite3/
-.env/
+
+# Django
+db.sqlite3
+.env
