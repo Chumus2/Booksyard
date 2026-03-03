@@ -1,9 +1,31 @@
 {% extends "Booksyard/base.html" %}
+{% load static %}
 
 {% block title %} Homepage - Booksyard {% endblock %}
 
+{% block css_file %} 
+<link rel="stylesheet" href="{% static 'home/css/home.css' %}">
+{% endblock %}
+
 {% block content %}
 
-<h1>Hello World!</h1>
+<hr>
+
+<div id="Hover_Menu">
+
+    <a href="">
+        <p>Home</p>
+    </a>
+    
+    <span>Books</span>
+    <span>E-Books</span>
+    <span>Audiobooks</span>
+    <span>Other products</span>
+
+</div>
+
+<hr>
+
+
 
 {% endblock %}
