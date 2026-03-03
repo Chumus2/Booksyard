@@ -13,20 +13,43 @@
 
     <div class="Book_Header">
 
-        <form method="get" action="">
+        <form method="get" action="{% url 'sorted_books' page_obj.number %}">
             <label for="sort">Sort by:</label>
-            <select name="sort" id="sort">
+            <select name="sort" id="sort" onchange="this.form.submit()">
 
-                <option value="">Default</option>
-                <option value="name">Name (A-Z)</option>
-                <option value="-name">Name (Z-A)</option>
-                <option value="price">Price (Low-High)</option>
-                <option value="-price">Price (High-Low)</option>
-                <option value="date">Date (Oldest-Newest)</option>
-                <option value="-date">Date (Newest-Oldest)</option>
-
+                <option value="" {% if not current_sort %}selected{% endif %}>Default</option>
+            
+                <option value="book_name" {% if current_sort == "book_name" %}selected{% endif %}>Name (A-Z)</option>
+                <option value="-book_name" {% if current_sort == "-book_name" %}selected{% endif %}>Name (Z-A)</option>
+            
+                <option value="price" {% if current_sort == "price" %}selected{% endif %}>Price (Low-High)</option>
+                <option value="-price" {% if current_sort == "-price" %}selected{% endif %}>Price (High-Low)</option>
+            
+                <option value="date" {% if current_sort == "date" %}selected{% endif %}>Date (Oldest-Newest)</option>
+                <option value="-date" {% if current_sort == "-date" %}selected{% endif %}>Date (Newest-Oldest)</option>
+            
             </select>
         </form>
+
+        <div class="Paginator">
+
+            {% if page_obj.has_previous %}
+            <a href="{% url 'home_paginated' page_obj.previous_page_number %}">
+                Previous
+            </a>
+            {% endif %}
+
+            <span>
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+            </span>
+
+            {% if page_obj.has_next %}
+            <a href="{% url 'home_paginated' page_obj.next_page_number %}">
+                Next
+            </a>
+            {% endif %}
+
+        </div>
 
     </div>
 
@@ -35,8 +58,7 @@
         <aside class="Book_Aside">
             <form method="get" action="">
 
-                <label for="type">Filter by type:</label>
-
+                <label>Filter by genre:</label>
                 <hr>
 
             </form>
@@ -44,28 +66,28 @@
 
         <div class="Book_Gallery">
 
-            {% if books %}
-
-                {% for book in books %}
-
+            {% if page_obj %}
+        
+                {% for book in page_obj %}
+        
                     <div class="Book_Item">
                         
                         {% if book.cover %}
                             <img src="{{ book.cover.url }}" alt="{{ book.book_name }}" width="200">
                         {% endif %}
-
+        
                         <h4>{{ book.book_name }}</h4>
                         <p>{{ book.author }}</p>
-                        <p>{{ book.type }}</p>
+                        <p>{{ book.get_type_display }}</p>
                         <p>{{ book.language }}</p>
                         <p>{{ book.price }}€</p>
-
+        
                     </div>
-
+        
                 {% endfor %}
-
+        
             {% endif %}
-
+        
         </div>
 
     </div>

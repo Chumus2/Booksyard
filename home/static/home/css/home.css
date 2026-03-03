@@ -1,7 +1,26 @@
+.Book_Header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin: 1.5rem;
+}
+
 #Book_Main {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 1rem;
+}
+
+.Book_Aside  {
+    display: flex;
+    flex-direction: column;
+}
+
+.Book_Aside form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
 }
 
 .Book_Gallery {
