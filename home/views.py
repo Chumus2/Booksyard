@@ -1,8 +1,10 @@
 from django.shortcuts import render
+from .models import Book
 
 
 def home(request):
-    context = {
-        
-    }
-    return render(request, "home/home.html")
+    books = Book.objects.all()[:28]
+    
+    context = {"books": books}
+
+    return render(request, "home/home.html", context)

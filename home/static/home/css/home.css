@@ -1,6 +1,20 @@
-#Hover_Menu {
-    display: flex;
+#Book_Main {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.Book_Gallery {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 1.5rem;
+}
+
+.Book_Item {
+    display: grid;
+    flex-direction: column;
+    text-align: center;
     justify-content: center;
     align-items: center;
-    gap: 1.5rem;
+    border: 3px solid black;
 }

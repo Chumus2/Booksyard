@@ -9,23 +9,67 @@
 
 {% block content %}
 
-<hr>
+<div id="Book">
 
-<div id="Hover_Menu">
+    <div class="Book_Header">
 
-    <a href="">
-        <p>Home</p>
-    </a>
-    
-    <span>Books</span>
-    <span>E-Books</span>
-    <span>Audiobooks</span>
-    <span>Other products</span>
+        <form method="get" action="">
+            <label for="sort">Sort by:</label>
+            <select name="sort" id="sort">
+
+                <option value="">Default</option>
+                <option value="name">Name (A-Z)</option>
+                <option value="-name">Name (Z-A)</option>
+                <option value="price">Price (Low-High)</option>
+                <option value="-price">Price (High-Low)</option>
+                <option value="date">Date (Oldest-Newest)</option>
+                <option value="-date">Date (Newest-Oldest)</option>
+
+            </select>
+        </form>
+
+    </div>
+
+    <div id="Book_Main">
+
+        <aside class="Book_Aside">
+            <form method="get" action="">
+
+                <label for="type">Filter by type:</label>
+
+                <hr>
+
+            </form>
+        </aside>
+
+        <div class="Book_Gallery">
+
+            {% if books %}
+
+                {% for book in books %}
+
+                    <div class="Book_Item">
+                        
+                        {% if book.cover %}
+                            <img src="{{ book.cover.url }}" alt="{{ book.book_name }}" width="200">
+                        {% endif %}
+
+                        <h4>{{ book.book_name }}</h4>
+                        <p>{{ book.author }}</p>
+                        <p>{{ book.type }}</p>
+                        <p>{{ book.language }}</p>
+                        <p>{{ book.price }}€</p>
+
+                    </div>
+
+                {% endfor %}
+
+            {% endif %}
+
+        </div>
+
+    </div>
 
 </div>
-
-<hr>
-
-
 
 {% endblock %}
