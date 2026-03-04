@@ -5,7 +5,20 @@
     </a>
 
     <form method="get" action="">
-        <input type="text" name="q" placeholder="Enter a book title or author...">
+        <input type="text" name="book_search" id="book_search" value="{{ request.GET.book_search|default:'' }}" placeholder="Enter a book title or author...">
+
+        {% if request.GET.sort %}
+        <input type="hidden" name="sort" value="{{ request.GET.sort }}">
+        {% endif %}
+
+        {% for g in selected_genres %}
+        <input type="hidden" name="genres" value="{{ g }}">
+        {% endfor %}
+
+        {% for l in selected_languages %}
+        <input type="hidden" name="language" value="{{ l }}">
+        {% endfor %}
+
         <button type="submit">Search</button>
     </form>
 

@@ -13,6 +13,8 @@
 
     <div class="Book_Header">
 
+        <h3>Founded: {{ total_books }} books</h3>
+
         <form method="get" action="{% url 'sorted_books' page_obj.number %}">
             <label for="sort">Sort by:</label>
             <select name="sort" id="sort" onchange="this.form.submit()">
@@ -29,6 +31,19 @@
                 <option value="-date" {% if current_sort == "-date" %}selected{% endif %}>Date (Newest-Oldest)</option>
             
             </select>
+
+            {% for g in selected_genres %}
+            <input type="hidden" name="genres" value="{{ g }}">
+            {% endfor %}
+
+            {% for l in selected_languages %}
+            <input type="hidden" name="language" value="{{ l }}">
+            {% endfor %}
+
+            {% if book_search %}
+            <input type="hidden" name="book_search" value="{{ book_search }}">
+            {% endif %}
+
         </form>
 
         <div class="Paginator">
@@ -58,8 +73,38 @@
         <aside class="Book_Aside">
             <form method="get" action="">
 
-                <label>Filter by genre:</label>
+                <h3>Filter by genre:</h3>
                 <hr>
+
+                {% for genre in genres %}
+                <label>
+                    <input type="checkbox" name="genres" value="{{ genre.id }}"
+                        {% if genre.id in selected_genres %}checked{% endif %}>
+                    {{ genre.name }}
+                </label>
+                {% endfor %}
+
+
+                <h3>Filter by language:</h3>
+                <hr>
+
+                {% for language in languages %}
+                <label>
+                    <input type="checkbox" name="language" value="{{ language }}"
+                        {% if language in selected_languages %}checked{% endif %}>
+                    {{ language }}
+                </label>
+                {% endfor %}
+
+                {% if current_sort %}
+                <input type="hidden" name="sort" value="{{ current_sort }}">
+                {% endif %}
+
+                {% if book_search %}
+                <input type="hidden" name="book_search" value="{{ book_search }}">
+                {% endif %}
+
+                <button type="submit">Find</button>
 
             </form>
         </aside>
