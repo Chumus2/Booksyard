@@ -13,7 +13,7 @@
 
     <div class="Book_Header">
 
-        <h3>Founded: {{ total_books }} books</h3>
+        <h3>Founded: {{ total_books }} {% if total_books == 1 %}book{% else %}books{% endif %}</h3>
 
         <form method="get" action="{% url 'sorted_books' page_obj.number %}">
             <label for="sort">Sort by:</label>
@@ -40,16 +40,21 @@
             <input type="hidden" name="language" value="{{ l }}">
             {% endfor %}
 
+            {% for t in selected_types %}
+            <input type="hidden" name="type" value="{{ t }}">
+            {% endfor %}
+
             {% if book_search %}
             <input type="hidden" name="book_search" value="{{ book_search }}">
             {% endif %}
+
 
         </form>
 
         <div class="Paginator">
 
             {% if page_obj.has_previous %}
-            <a href="{% url 'home_paginated' page_obj.previous_page_number %}">
+            <a href="{% url 'home_paginated' page_obj.previous_page_number %}?{{ request.GET.urlencode }}">
                 Previous
             </a>
             {% endif %}
@@ -59,7 +64,7 @@
             </span>
 
             {% if page_obj.has_next %}
-            <a href="{% url 'home_paginated' page_obj.next_page_number %}">
+            <a href="{% url 'home_paginated' page_obj.next_page_number %}?{{ request.GET.urlencode }}">
                 Next
             </a>
             {% endif %}
@@ -72,6 +77,9 @@
 
         <aside class="Book_Aside">
             <form method="get" action="">
+
+                <a href="{% url 'home_paginated' 1 %}">Clear</a>
+                <button type="submit">Find</button>
 
                 <h3>Filter by genre:</h3>
                 <hr>
@@ -96,6 +104,18 @@
                 </label>
                 {% endfor %}
 
+
+                <h3>Filter by type:</h3>
+                <hr>
+
+                {% for type in types %}
+                <label>
+                    <input type="checkbox" name="type" value="{{ type }}"
+                        {% if type in selected_types %}checked{% endif %}>
+                    {{ type }}
+                </label>
+                {% endfor %}
+
                 {% if current_sort %}
                 <input type="hidden" name="sort" value="{{ current_sort }}">
                 {% endif %}
@@ -103,8 +123,6 @@
                 {% if book_search %}
                 <input type="hidden" name="book_search" value="{{ book_search }}">
                 {% endif %}
-
-                <button type="submit">Find</button>
 
             </form>
         </aside>

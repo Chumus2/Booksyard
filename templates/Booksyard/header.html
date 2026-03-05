@@ -1,6 +1,6 @@
 <header>
 
-    <a href="">
+    <a href="{% url 'home' %}">
         <h1>Booksyard</h1>
     </a>
 
@@ -19,10 +19,14 @@
         <input type="hidden" name="language" value="{{ l }}">
         {% endfor %}
 
+        {% for t in selected_types %}
+        <input type="hidden" name="type" value="{{ t }}">
+        {% endfor %}
+
         <button type="submit">Search</button>
     </form>
 
-    <a href="">
+    <a href="{% url 'login' %}">
         <p>My account</p>
     </a>
 

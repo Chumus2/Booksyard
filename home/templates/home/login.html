@@ -1,0 +1,41 @@
+{% extends "Booksyard/base.html" %}
+{% load static %}
+
+{% block css_file %} 
+<link rel="stylesheet" href="{% static 'home/css/log_in.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div>
+
+    <h2>Log in</h2>
+
+    <form method="post" action="">
+        {% csrf_token %}
+
+        <label for="email">Email</label>
+        <input type="email" name="email" placeholder="Enter your email here..." required>
+
+        <label for="password">Password</label>
+        <input type="password" name="password" placeholder="Enter your password here..." required>
+
+        <a href="">
+            Forgot something?
+        </a>
+
+        {% if error %}
+        <p>Something goes wrong. {{ error }}</p>
+        {% endif %}
+
+        <button type="submit">Log in</button>
+
+        <h3>
+            Don't have an account? <a href="{% url 'sign_up' %}">Sign up</a>
+        </h3>
+
+    </form>
+
+</div>
+
+{% endblock %}

@@ -8,10 +8,3 @@ header {
     align-items: center;
     gap: 1rem;
 }
-
-#Hover_Menu {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 1.5rem;
-}

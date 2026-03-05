@@ -26,7 +26,7 @@ class Book(models.Model):
     genre = models.ManyToManyField(Genre, related_name="books")
     description = models.TextField()
     price = models.FloatField()
-    date = models.DateField()
+    date = models.DateField(blank=True, null=True)
     cover = models.ImageField(upload_to="book_cover/", blank=True, null=True)
 
     def __str__(self):
