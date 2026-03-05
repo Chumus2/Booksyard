@@ -1,8 +1,9 @@
+import re
 from django.core.paginator import Paginator
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.db import models
 from .models import Book, Genre
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 
@@ -110,6 +111,18 @@ def sign_up(request):
         if User.objects.filter(email=email).exists():
             return render(request, "home/register.html", {"error": "Email already registered."})
         
+        # Password
+        if len(password) < 8:
+            return render(request, "home/register.html", {"error": "Password must be at least 8 characters."})
+        if not re.search(r"[A-Z]", password):
+            return render(request, "home/register.html", {"error": "Password must contain at least one uppercase letter."})
+        if not re.search(r"[a-z]", password):
+            return render(request, "home/register.html", {"error": "Password must contain at least one lowercase letter."})
+        if not re.search(r"\d", password):
+            return render(request, "home/register.html", {"error": "Password must contain at least one digit."})
+        if not re.search(r"[!@#$%^&*(),.?\":{}|<>]", password):
+            return render(request, "home/register.html", {"error": "Password must contain at least one special character (!@#$%^&* etc.)."})
+        
         user = User.objects.create_user(username=username, email=email, password=password)
         user.save()
 
@@ -120,7 +133,18 @@ def sign_up(request):
     return render(request, "home/sign_up.html")
 
 
+# Log_Out
+def log_out(request):
+    logout(request)
+    return redirect("home")
+
+
 # Account
 @login_required(login_url="log_in")
-def account(request):
-    pass
+def account(request, username):
+    if request.user.username != username:
+        return redirect("home")
+    
+    user_obj = get_object_or_404(User, username=username)
+
+    return render(request, "home/account.html", {"user_obj": user_obj})

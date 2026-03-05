@@ -26,8 +26,8 @@
         <button type="submit">Search</button>
     </form>
 
-    <a href="{% url 'login' %}">
-        <p>My account</p>
+    <a href="{% if user.is_authenticated %}{% url 'account' user.username %}{% else %}{% url 'login' %}{% endif %}">
+        <button type="button">My Account</button>
     </a>
 
     <a href="">
