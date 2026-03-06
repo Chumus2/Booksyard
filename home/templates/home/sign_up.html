@@ -17,19 +17,21 @@
         {% csrf_token %}
 
         <label for="username">Username</label>
-        <input type="text" name="username" placeholder="Enter your username here..." required>
+        <input type="text" name="username" value="{{ request.POST.username }}" placeholder="Enter your username here...">
 
         <label for="email">Email</label>
-        <input type="email" name="email" placeholder="Enter your email here..." required>
+        <input type="email" name="email" value="{{ request.POST.email }}" placeholder="Enter your email here...">
 
         <label for="password">Password</label>
-        <input type="password" name="password" placeholder="Enter your password here..." required>
+        <input type="password" name="password" id="password" value="{{ request.POST.password }}" placeholder="Enter your password here...">
+
+        <button type="button" onclick="toggle_password()">Show</button>
 
         <label for="password2">Confirm password</label>
-        <input type="password" name="password2" placeholder="Confirm your password here..." required>
+        <input type="password" name="password2" placeholder="Confirm your password here...">
 
         {% if error %}
-        <p>Something goes wrong. {{ error }}</p>
+        <p id="error_message">Something goes wrong. {{ error }}</p>
         {% endif %}
 
         <button type="submit">Sign up</button>
@@ -41,5 +43,7 @@
     </form>
 
 </div>
+
+<script src="{% static 'home/js/sign_up.js' %}" defer></script>
 
 {% endblock %}

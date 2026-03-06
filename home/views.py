@@ -100,28 +100,28 @@ def sign_up(request):
         password2 = request.POST.get("password2")
 
         if not username or not email or not password or not password2:
-            return render(request, "home/register.html", {"error": "All fields are required."})
+            return render(request, "home/sign_up.html", {"error": "All fields are required."})
 
         if password != password2:
-            return render(request, "home/register.html", {"error": "Passwords do not match."})
+            return render(request, "home/sign_up.html", {"error": "Passwords do not match."})
         
         if User.objects.filter(username=username).exists():
-            return render(request, "home/register.html", {"error": "Username already taken."})
+            return render(request, "home/sign_up.html", {"error": "Username already taken."})
 
         if User.objects.filter(email=email).exists():
-            return render(request, "home/register.html", {"error": "Email already registered."})
+            return render(request, "home/sign_up.html", {"error": "Email already registered."})
         
         # Password
         if len(password) < 8:
-            return render(request, "home/register.html", {"error": "Password must be at least 8 characters."})
+            return render(request, "home/sign_up.html", {"error": "Password must be at least 8 characters."})
         if not re.search(r"[A-Z]", password):
-            return render(request, "home/register.html", {"error": "Password must contain at least one uppercase letter."})
+            return render(request, "home/sign_up.html", {"error": "Password must contain at least one uppercase letter."})
         if not re.search(r"[a-z]", password):
-            return render(request, "home/register.html", {"error": "Password must contain at least one lowercase letter."})
+            return render(request, "home/sign_up.html", {"error": "Password must contain at least one lowercase letter."})
         if not re.search(r"\d", password):
-            return render(request, "home/register.html", {"error": "Password must contain at least one digit."})
+            return render(request, "home/sign_up.html", {"error": "Password must contain at least one digit."})
         if not re.search(r"[!@#$%^&*(),.?\":{}|<>]", password):
-            return render(request, "home/register.html", {"error": "Password must contain at least one special character (!@#$%^&* etc.)."})
+            return render(request, "home/sign_up.html", {"error": "Password must contain at least one special character (!@#$%^&* etc.)."})
         
         user = User.objects.create_user(username=username, email=email, password=password)
         user.save()
@@ -148,3 +148,11 @@ def account(request, username):
     user_obj = get_object_or_404(User, username=username)
 
     return render(request, "home/account.html", {"user_obj": user_obj})
+
+
+# Book_Detail
+@login_required(login_url="log_in")
+def book_detail(request, book_id):
+    book_obj = get_object_or_404(Book, id=book_id)
+
+    return render(request, "home/book.html", {"book_obj": book_obj})

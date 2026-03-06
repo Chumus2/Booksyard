@@ -133,7 +133,7 @@
         
                 {% for book in page_obj %}
         
-                    <div class="Book_Item">
+                    <a href="{% url 'book_detail' book.id %}" class="Book_Item">
                         
                         {% if book.cover %}
                             <img src="{{ book.cover.url }}" alt="{{ book.book_name }}" width="200">
@@ -145,7 +145,7 @@
                         <p>{{ book.language }}</p>
                         <p>{{ book.price }}€</p>
         
-                    </div>
+                    </a>
         
                 {% endfor %}
         

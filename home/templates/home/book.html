@@ -1,0 +1,46 @@
+{% extends "Booksyard/base.html" %}
+{% load static %}
+
+{% block title %} {{ book_obj.book_name }} - Booksyard {% endblock %}
+
+{% block css_file %} 
+<link rel="stylesheet" href="{% static 'home/css/book.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div>
+
+    <img src="{{ book_obj.cover.url }}" alt="{{ book_obj.book_name }}">
+
+    <div>
+
+        <div>
+
+            <h1>{{ book_obj.book_name }}</h1>
+            <p>{{ book_obj.author }}</p>
+
+            <h3>Language: {{ book_obj.language }}</h3>
+            <h3>Type: {{ book_obj.type }}</h3>
+            <p>Published: {{ book_obj.date|date:"F Y" }}</p>
+
+            <p>{{ book_obj.description }}</p>
+
+        </div>
+
+        <div>
+
+            <h1>{{ book_obj.price }}</h1>
+
+            <form method="post" action="">
+                {% csrf_token %}
+                <button type="submit">Add to cart</button>
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
