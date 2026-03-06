@@ -30,8 +30,8 @@
         <button type="button">My Account</button>
     </a>
 
-    <a href="">
-        <p>Cart</p>
+    <a href="{% url 'cart' %}">
+        <p>Cart - {{ total_cart_items }} {% if total_cart_items > 1 %}items{% else %}item{% endif %}</p>
     </a>
 
 </header>

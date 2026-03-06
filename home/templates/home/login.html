@@ -20,7 +20,9 @@
         <input type="email" name="email" placeholder="Enter your email here..." required>
 
         <label for="password">Password</label>
-        <input type="password" name="password" placeholder="Enter your password here..." required>
+        <input type="password" name="password" id="password" placeholder="Enter your password here..." required>
+
+        <button type="button" onclick="toggle_password()">Show</button>
 
         <a href="">
             Forgot something?
@@ -39,5 +41,7 @@
     </form>
 
 </div>
+
+<script src="{% static 'home/js/sign_up.js' %}" defer></script>
 
 {% endblock %}

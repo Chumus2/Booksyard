@@ -2,7 +2,7 @@ import re
 from django.core.paginator import Paginator
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db import models
-from .models import Book, Genre
+from .models import Book, Genre, Cart_Item
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
@@ -11,6 +11,7 @@ from django.contrib.auth.decorators import login_required
 # Book_List
 def book_list(request, page=1):
     books = Book.objects.all()
+    cart_items = Cart_Item.objects.filter(user=request.user)
     genres = Genre.objects.all()
     languages = Book.objects.values_list("language", flat=True).distinct()
     types = Book.objects.values_list("type", flat=True).distinct()
@@ -45,11 +46,13 @@ def book_list(request, page=1):
         books = books.filter(type__in=selected_types)
 
     total_books = books.count()
+    total_cart_items = cart_items.count()
     paginator = Paginator(books, 28)
     page_obj = paginator.get_page(page)
 
     context = {
         "page_obj": page_obj,
+        "total_cart_items": total_cart_items,
         "genres": genres,
         "languages": languages,
         "types": types,
@@ -140,7 +143,7 @@ def log_out(request):
 
 
 # Account
-@login_required(login_url="log_in")
+@login_required(login_url="login")
 def account(request, username):
     if request.user.username != username:
         return redirect("home")
@@ -151,8 +154,59 @@ def account(request, username):
 
 
 # Book_Detail
-@login_required(login_url="log_in")
 def book_detail(request, book_id):
     book_obj = get_object_or_404(Book, id=book_id)
 
     return render(request, "home/book.html", {"book_obj": book_obj})
+
+
+# Add_To_Cart
+@login_required(login_url="login")
+def add_to_cart(request, book_id):
+    book_obj = get_object_or_404(Book, id=book_id)
+    amount = int(request.POST.get("quantity", 1))
+    cart_item, created = Cart_Item.objects.get_or_create(user=request.user, book=book_obj)
+
+    if created:
+        cart_item.quantity = amount
+    else:
+        cart_item.quantity += amount
+    cart_item.save()
+
+    return redirect("home")
+
+
+# Cart_View
+@login_required(login_url="login")
+def cart_view(request):
+    cart_items = Cart_Item.objects.filter(user=request.user)
+    total_cart_items = cart_items.count()
+    total = sum(item.total_price for item in cart_items)
+
+    context = {
+        "cart_items":cart_items,
+        "total": round(total, 2),
+        "total_cart_items": total_cart_items
+    }
+
+    return render(request, "home/cart.html", context)
+
+
+# Cart_Clear_All
+@login_required(login_url="login")
+def clear_cart(request):
+    if request.method == "POST":
+        Cart_Item.objects.filter(user=request.user).delete()
+
+    return redirect("cart")
+
+
+# Remove_Item_From_Cart
+@login_required(login_url="login")
+def remove_item_from_cart(request, item_id):
+    cart_item = get_object_or_404(Cart_Item, id=item_id, user=request.user)
+    
+    if request.method == "POST":
+        cart_item.delete()
+
+    return redirect("cart")

@@ -1,0 +1,66 @@
+{% extends "Booksyard/base.html" %}
+{% load static %}
+
+{% block title %} Your cart - Booksyard {% endblock %}
+
+{% block css_file %} 
+<link rel="stylesheet" href="{% static 'home/css/cart.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div>
+
+    <h2>Your Cart</h2>
+
+    {% if cart_items %}
+
+    <table>
+
+        <tr>
+            <th>Cover</th>
+            <th>Book</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Total</th>
+        </tr>
+
+
+        {% for item in cart_items %}
+        <tr>
+
+            <td>
+                <img src="{{ item.book.cover.url }}" alt="{{ item.book.book_name }}" width="100">
+            </td>
+            <td>{{ item.book.book_name }}</td>
+            <td>{{ item.quantity }}</td>
+            <td>{{ item.book.price }}€</td>
+            <td>{{ item.total_price }}€</td>
+            <td>
+                <form method="post" action="{% url 'remove_item' item.id %}">
+                    {% csrf_token %}
+                    <button type="submit">Remove</button>
+                </form>
+            </td>
+
+        </tr>
+        {% endfor %}
+
+    </table>
+
+    <h3>Total price: {{ total }}€</h3>
+
+    <form method="post" action="{% url 'clear_cart' %}">
+        {% csrf_token %}
+        <button type="submit">Clear all</button>
+    </form>
+
+
+    {% else %}
+    <p>Your cart is empty.</p>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}
