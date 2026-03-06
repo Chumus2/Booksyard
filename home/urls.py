@@ -9,6 +9,7 @@ urlpatterns = [
 
     path("log_in/", views.log_in, name="login"),
     path("sign_up/", views.sign_up, name="sign_up"),
+    path("verify/", views.verify_code, name="verify_code"),
     path("logout/", views.log_out, name="log_out"),
 
     path("account/<str:username>/", views.account, name="account"),

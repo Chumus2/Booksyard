@@ -1,20 +1,28 @@
 import re
+from .utils import send_verification_code
 from django.core.paginator import Paginator
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db import models
-from .models import Book, Genre, Cart_Item
+from .models import Book, Genre, Cart_Item, Email_Verification_Code
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 
 
+
 # Book_List
 def book_list(request, page=1):
     books = Book.objects.all()
-    cart_items = Cart_Item.objects.filter(user=request.user)
     genres = Genre.objects.all()
     languages = Book.objects.values_list("language", flat=True).distinct()
     types = Book.objects.values_list("type", flat=True).distinct()
+
+    # Cart_Items
+    if request.user.is_authenticated:
+        cart_items = Cart_Item.objects.filter(user=request.user)
+        total_cart_items = cart_items.count()
+    else:
+        total_cart_items = 0
 
     # Search
     book_search = request.GET.get("book_search", "").strip()
@@ -46,7 +54,6 @@ def book_list(request, page=1):
         books = books.filter(type__in=selected_types)
 
     total_books = books.count()
-    total_cart_items = cart_items.count()
     paginator = Paginator(books, 28)
     page_obj = paginator.get_page(page)
 
@@ -82,10 +89,12 @@ def log_in(request):
         user = authenticate(request, username=user.username, password=password)
 
         if user is not None:
-            login(request, user)
-            return redirect("home")
+            request.session["verify_user"] = user.id
+            send_verification_code(user)
 
-        return render(request, "home/login.html", {"error": "Incorrect email or password"})
+            return redirect("verify_code")
+        else:
+            return render(request, "home/login.html", {"error": "Incorrect email or password"})
 
     return render(request, "home/login.html")
 
@@ -134,6 +143,30 @@ def sign_up(request):
         return redirect("home")
 
     return render(request, "home/sign_up.html")
+
+
+# Verify_Code
+def verify_code(request):
+    user_id = request.session.get("verify_user")
+
+    if not user_id:
+        return redirect("login")
+    
+    user = get_object_or_404(User, id=user_id)
+
+    if request.method == "POST":
+        code = request.POST.get("code")
+        verification = Email_Verification_Code.objects.filter(
+            user=user, code=code
+        ).order_by("-created_at").first()
+
+        if verification and not verification.is_expired():
+            login(request, user)
+            del request.session["verify_user"]
+
+            return redirect("home")
+        
+    return render(request, "home/verify_code.html")
 
 
 # Log_Out
