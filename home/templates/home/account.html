@@ -7,13 +7,50 @@
 
 <div>
 
-    <h2>Username: {{ user_obj.username }}</h2>
-    <h2>Email: {{ user_obj.email }}</h2>
+    <div>
+
+        <h2>Username: {{ user_obj.username }}</h2>
+
+        <form method="post" action="{% url 'change_username' %}">
+            {% csrf_token %}
+
+            <input type="text" name="new_username" placeholder="Enter your new username here...">
+
+            <button type="submit">Save</button>
+
+        </form>
+
+    </div>
+
+    {% if message %}
+    <p class="message">{{ message }}</p>
+    {% endif %}
+
+    <div>
+
+        <h2>Email: {{ user_obj.email }}</h2>
+
+        <form method="post" action="{% url 'change_email' %}">
+            {% csrf_token %}
+
+            <input type="email" name="new_email" placeholder="Enter your new email here...">
+
+            <button type="submit">Save</button>
+
+        </form>
+
+    </div>
+
+    {% if message2 %}
+    <p class="message">{{ message2 }}</p>
+    {% endif %}
 
     <a href="{% url 'log_out' %}">
         <button type="button">Log out</button>
     </a>
 
 </div>
+
+<script src="{% static 'home/js/account.js' %}" defer></script>
 
 {% endblock %}

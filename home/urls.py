@@ -12,7 +12,9 @@ urlpatterns = [
     path("verify/", views.verify_code, name="verify_code"),
     path("logout/", views.log_out, name="log_out"),
 
-    path("account/<str:username>/", views.account, name="account"),
+    path("account/", views.account, name="account"),
+    path("account/change_username/", views.change_name, name="change_username"),
+    path("account/change_email/", views.change_email, name="change_email"),
     path("book/<str:book_id>/", views.book_detail, name="book_detail"),
     path("cart/add/<int:book_id>/", views.add_to_cart, name="add_to_cart"),
 

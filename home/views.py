@@ -101,7 +101,6 @@ def log_in(request):
 
 # Sign_Up
 def sign_up(request):
-    
     if request.user.is_authenticated:
         return redirect("home")
     
@@ -126,13 +125,13 @@ def sign_up(request):
         # Password
         if len(password) < 8:
             return render(request, "home/sign_up.html", {"error": "Password must be at least 8 characters."})
-        if not re.search(r"[A-Z]", password):
+        elif not re.search(r"[A-Z]", password):
             return render(request, "home/sign_up.html", {"error": "Password must contain at least one uppercase letter."})
-        if not re.search(r"[a-z]", password):
+        elif not re.search(r"[a-z]", password):
             return render(request, "home/sign_up.html", {"error": "Password must contain at least one lowercase letter."})
-        if not re.search(r"\d", password):
+        elif not re.search(r"\d", password):
             return render(request, "home/sign_up.html", {"error": "Password must contain at least one digit."})
-        if not re.search(r"[!@#$%^&*(),.?\":{}|<>]", password):
+        elif not re.search(r"[!@#$%^&*(),.?\":{}|<>]", password):
             return render(request, "home/sign_up.html", {"error": "Password must contain at least one special character (!@#$%^&* etc.)."})
         
         user = User.objects.create_user(username=username, email=email, password=password)
@@ -172,18 +171,63 @@ def verify_code(request):
 # Log_Out
 def log_out(request):
     logout(request)
-    return redirect("home")
+    return redirect("login")
 
 
 # Account
 @login_required(login_url="login")
-def account(request, username):
-    if request.user.username != username:
-        return redirect("home")
-    
-    user_obj = get_object_or_404(User, username=username)
+def account(request):
+    user_obj = request.user
+    cart_items = Cart_Item.objects.filter(user=user_obj)
+    total_cart_items = cart_items.count()
 
-    return render(request, "home/account.html", {"user_obj": user_obj})
+    message = request.session.pop("message", None)
+    message2 = request.session.pop("message2", None)
+
+    context = {
+        "user_obj": user_obj,
+        "total_cart_items": total_cart_items,
+        "message": message,
+        "message2": message2
+    }
+    
+    return render(request, "home/account.html", context)
+
+
+# Change_Name
+@login_required(login_url="login")
+def change_name(request):
+    if request.method == "POST":
+        new_username = request.POST.get("new_username", "").strip()
+
+        if not new_username:
+            request.session["message"] = "Username cannot be empty."
+        elif User.objects.filter(username=new_username).exclude(id=request.user.id).exists():
+            request.session["message"] = "This username is already taken."
+        else:
+            request.user.username = new_username
+            request.user.save()
+            request.session["message"] = "Username updated successfully!"
+
+    return redirect("account")
+
+
+# Change_Email
+@login_required(login_url="login")
+def change_email(request):
+    if request.method == "POST":
+        new_email = request.POST.get("new_email", "").strip()
+
+        if not new_email:
+            request.session["message2"] = "Email cannot be empty."
+        elif User.objects.filter(email=new_email).exclude(id=request.user.id).exists():
+            request.session["message2"] = "This email is already registered."
+        else:
+            request.user.email = new_email
+            request.user.save()
+            request.session["message2"] = "Email updated successfully."
+
+    return redirect("account")
 
 
 # Book_Detail

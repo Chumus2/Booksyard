@@ -26,12 +26,16 @@
         <button type="submit">Search</button>
     </form>
 
-    <a href="{% if user.is_authenticated %}{% url 'account' user.username %}{% else %}{% url 'login' %}{% endif %}">
+    <a href="{% if user.is_authenticated %}{% url 'account' %}{% else %}{% url 'login' %}{% endif %}">
         <button type="button">My Account</button>
     </a>
 
     <a href="{% url 'cart' %}">
-        <p>Cart - {{ total_cart_items }} {% if total_cart_items > 1 %}items{% else %}item{% endif %}</p>
+        <p>Cart 
+            {% if user.is_authenticated %}
+                - {{ total_cart_items }} {% if total_cart_items > 1 %}items{% else %}item{% endif %}
+            {% endif %}
+        </p>
     </a>
 
 </header>
