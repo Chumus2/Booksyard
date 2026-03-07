@@ -19,6 +19,10 @@
 
         </form>
 
+        {% if message3 %}
+        <p class="message">{{ message3 }}</p>
+        {% endif %}
+
         <h2>Username: {{ user_obj.username }}</h2>
 
         <form method="post" action="{% url 'change_username' %}">
@@ -53,6 +57,35 @@
 
     {% if message2 %}
     <p class="message">{{ message2 }}</p>
+    {% endif %}
+
+    <div>
+
+        <h2>Country: {{ user_obj.profile.country }}</h2>
+
+        <form method="post" action="{% url 'change_country' %}">
+            {% csrf_token %}
+
+            <select name="country">
+
+                <option value="">Select your country</option>
+
+                {% for country in countries %}
+                <option value="{{ country }}" {% if user_obj.profile.country == country %}selected{% endif %}>
+                    {{ country }}
+                </option>
+                {% endfor %}
+
+            </select>
+
+            <button type="submit">Save</button>
+
+        </form>
+
+    </div>
+
+    {% if message4 %}
+    <p class="message">{{ message4 }}</p>
     {% endif %}
 
     <a href="{% url 'log_out' %}">

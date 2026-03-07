@@ -1,4 +1,5 @@
 import re
+import pycountry
 from .utils import send_verification_code
 from django.core.paginator import Paginator
 from django.shortcuts import render, redirect, get_object_or_404
@@ -241,12 +242,19 @@ def account(request):
 
     message = request.session.pop("message", None)
     message2 = request.session.pop("message2", None)
+    message3 = request.session.pop("message3", None)
+    message4 = request.session.pop("message4", None)
+
+    countries = [country.name for country in pycountry.countries]
 
     context = {
         "user_obj": user_obj,
         "total_cart_items": total_cart_items,
         "message": message,
-        "message2": message2
+        "message2": message2,
+        "message3": message3,
+        "message4": message4,
+        "countries": countries
     }
     
     return render(request, "home/account.html", context)
@@ -294,10 +302,31 @@ def change_avatar(request):
     if request.method == "POST":
         avatar = request.FILES.get("avatar")
 
-        if avatar:
+        if not avatar:
+            request.session["message3"] = "Avatar needs picture."
+        else:
             profile = request.user.profile
             profile.avatar = avatar
             profile.save()
+
+    return redirect("account")
+
+
+# Change_Country
+@login_required(login_url="login")
+def change_country(request):
+    if request.method == "POST":
+        new_country = request.POST.get("country").strip()
+
+        if not new_country:
+            request.session["message4"] = "Country cannot be empty."
+        elif not pycountry.countries.get(name=new_country):
+            request.session["message4"] = "Invalid country. Please enter a real country."
+        else:
+            profile = request.user.profile
+            profile.country = new_country
+            profile.save()
+            request.session["message4"] = "Country updated successfully!"
 
     return redirect("account")
 

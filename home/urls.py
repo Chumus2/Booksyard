@@ -24,6 +24,7 @@ urlpatterns = [
     path("account/change_email/", views.change_email, name="change_email"),
     path("account/change_avatar/", views.change_avatar, name="change_avatar"),
     path("cart/add/<int:book_id>/", views.add_to_cart, name="add_to_cart"),
+    path("account/change_country/", views.change_country, name="change_country"),
 
     path("password_reset/", auth_views.PasswordResetView.as_view(
         template_name="home/password_reset.html"
