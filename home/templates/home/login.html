@@ -24,8 +24,8 @@
 
         <button type="button" onclick="toggle_password()">Show</button>
 
-        <a href="">
-            Forgot something?
+        <a href="{% url 'password_reset' %}">
+            Forgot password?
         </a>
 
         {% if error %}

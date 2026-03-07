@@ -62,3 +62,12 @@ class Email_Verification_Code(models.Model):
     
     def __str__(self):
         return f"{self.user.username} - {self.code}"
+    
+
+# Profile Data_Base 
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
+    avatar = models.ImageField(upload_to="avatars/", default="avatars/default_profile_avatar.jpg")
+
+    def __str__(self):
+        return self.user.username

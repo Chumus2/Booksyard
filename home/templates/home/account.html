@@ -9,6 +9,16 @@
 
     <div>
 
+        <img src="{{ user_obj.profile.avatar.url }}" width="225" height="200" style="border-radius: 200%;">
+
+        <form method="post" enctype="multipart/form-data" action="{% url 'change_avatar' %}">
+            {% csrf_token %}
+
+            <input type="file" name="avatar">
+            <button type="submit">Upload</button>
+
+        </form>
+
         <h2>Username: {{ user_obj.username }}</h2>
 
         <form method="post" action="{% url 'change_username' %}">
@@ -48,6 +58,11 @@
     <a href="{% url 'log_out' %}">
         <button type="button">Log out</button>
     </a>
+
+    <form method="post" action="{% url 'delete_account' %}">
+        {% csrf_token %}
+        <button type="submit" style="color: red">Delete account</button>
+    </form>
 
 </div>
 

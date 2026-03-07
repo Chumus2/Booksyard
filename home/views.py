@@ -230,6 +230,33 @@ def change_email(request):
     return redirect("account")
 
 
+# Change_Avatar 
+@login_required(login_url="login")
+def change_avatar(request):
+    if request.method == "POST":
+        avatar = request.FILES.get("avatar")
+
+        if avatar:
+            profile = request.user.profile
+            profile.avatar = avatar
+            profile.save()
+
+    return redirect("account")
+
+
+# Delete_Account
+@login_required(login_url="login")
+def delete_account(request):
+    if request.method == "POST":
+        user = request.user
+        logout(request)
+        user.delete()
+
+        return redirect("home")
+    
+    return redirect("account")
+
+
 # Book_Detail
 def book_detail(request, book_id):
     book_obj = get_object_or_404(Book, id=book_id)
