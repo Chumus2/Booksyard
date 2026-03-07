@@ -1,0 +1,10 @@
+.User_Comment {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.User_Comment img {
+    border-radius: 5rem;
+}

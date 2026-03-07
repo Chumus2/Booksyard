@@ -94,6 +94,44 @@ def create_comment(request, book_id):
     return redirect("book_detail", book_id=book_obj.id)
 
 
+# Edit_Comment
+@login_required(login_url="login")
+def edit_comment(request, comment_id):
+    comment = get_object_or_404(Comment, id=comment_id)
+    book_id = comment.book.id
+
+    if comment.user != request.user:
+        return redirect("book_detail", book_id=book_id)
+
+    if request.method == "POST":
+        new_text = request.POST.get("text", "").strip()
+
+        if new_text:
+            comment.text = new_text
+            comment.save()
+
+            return redirect("book_detail", book_id=book_id)
+        
+    return render(request, "home/edit_comment.html", {"comment": comment})
+
+
+# Delete_Comment
+@login_required(login_url="login")
+def delete_comment(request, comment_id):
+    comment = get_object_or_404(Comment, id=comment_id)
+
+    if comment.user != request.user:
+        return redirect("book_detail", book_id=comment.book.id)
+    
+    if request.method == "POST":
+        book_id = comment.book.id
+        comment.delete()
+
+        return redirect("book_detail", book_id=book_id)
+    
+    return redirect("book_detail", book_id=comment.book.id)
+
+
 # Login
 def log_in(request):
 

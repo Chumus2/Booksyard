@@ -53,9 +53,32 @@
             <h3>Comments:</h3>
 
             {% for comment in book_obj.comments.all %}
-            <p><strong>{{ comment.user.username }}:</strong> {{ comment.text }} ({{ comment.created_at }})</p>
-            {% empty %}
-            <p>No comments yet.</p>
+            
+            <div class="User_Comment">
+
+                <img src="{{ comment.user.profile.avatar.url|default:'/media/avatars/default.jpg' }}" width="40" height="40">
+                <p><strong>{{ comment.user.username }}:</strong> {{ comment.text }} ({{ comment.created_at }})</p>
+
+                <div>
+
+                    {% if request.user == comment.user %}
+                    <a href="{% url 'edit_comment' comment.id %}">
+                        <button type="button">Edit</button>
+                    </a>
+
+                    <form method="post" action="{% url 'delete_comment' comment.id %}">
+                        {% csrf_token %}
+                        <button type="submit">Delete</button>
+                    </form>
+                    {% endif %}
+
+                </div>
+
+                {% empty %}
+                <p>No comments yet.</p>
+
+            </div>
+
             {% endfor %}
 
             {% if user.is_authenticated %}
