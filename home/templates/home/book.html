@@ -46,6 +46,30 @@
 
     </div>
 
+    <div>
+
+        <div>
+
+            <h3>Comments:</h3>
+
+            {% for comment in book_obj.comments.all %}
+            <p><strong>{{ comment.user.username }}:</strong> {{ comment.text }} ({{ comment.created_at }})</p>
+            {% empty %}
+            <p>No comments yet.</p>
+            {% endfor %}
+
+            {% if user.is_authenticated %}
+            <form method="post" action="{% url 'create_comment' book_obj.id %}">
+                {% csrf_token %}
+                <textarea name="text" placeholder="Enter your comment..." rows="3"></textarea>
+                <button type="submit">Post</button>
+            </form>
+            {% endif %}
+
+        </div>
+
+    </div>
+
 </div>
 
 <script src="{% static 'home/js/book.js' %}" defer></script>

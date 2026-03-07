@@ -3,7 +3,7 @@ from .utils import send_verification_code
 from django.core.paginator import Paginator
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db import models
-from .models import Book, Genre, Cart_Item, Email_Verification_Code
+from .models import *
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
@@ -72,6 +72,26 @@ def book_list(request, page=1):
     }
 
     return render(request, "home/home.html", context)
+
+
+# Book_Details
+def book_detail(request, book_id):
+    book_obj = get_object_or_404(Book, id=book_id)
+
+    return render(request, "home/book.html", {"book_obj": book_obj})
+
+
+# Add_Comment_To_Book
+@login_required(login_url="login")
+def create_comment(request, book_id):
+    book_obj = get_object_or_404(Book, id=book_id)
+
+    if request.method == "POST":
+        text = request.POST.get("text", "").strip()
+        if text:
+            Comment.objects.create(book=book_obj, user=request.user, text=text)
+
+    return redirect("book_detail", book_id=book_obj.id)
 
 
 # Login

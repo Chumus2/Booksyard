@@ -13,12 +13,14 @@ urlpatterns = [
     path("verify/", views.verify_code, name="verify_code"),
     path("logout/", views.log_out, name="log_out"),
 
+    path("book/<int:book_id>/", views.book_detail, name="book_detail"),
+    path("book/<int:book_id>/comment/", views.create_comment, name="create_comment"),
+
     path("account/", views.account, name="account"),
     path("account/delete/", views.delete_account, name="delete_account"),
     path("account/change_username/", views.change_name, name="change_username"),
     path("account/change_email/", views.change_email, name="change_email"),
     path("account/change_avatar/", views.change_avatar, name="change_avatar"),
-    path("book/<str:book_id>/", views.book_detail, name="book_detail"),
     path("cart/add/<int:book_id>/", views.add_to_cart, name="add_to_cart"),
 
     path("password_reset/", auth_views.PasswordResetView.as_view(
