@@ -1,3 +1,4 @@
+import os
 from decouple import config
 from pathlib import Path
 
@@ -90,4 +91,4 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
 EMAIL_HOST_USER = "vladiktimofeev50@gmail.com"
-EMAIL_HOST_PASSWORD = "qzeebashvtgiujas"
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
