@@ -78,8 +78,15 @@ def book_list(request, page=1):
 # Book_Details
 def book_detail(request, book_id):
     book_obj = get_object_or_404(Book, id=book_id)
+    comments = Comment.objects.filter(book=book_obj).select_related("user", "user__profile")
+    active_users = User.objects.filter(comment__book=book_obj).distinct()
+    context = {
+        "book_obj": book_obj,
+        "comments": comments,
+        "active_users": active_users
+    }
 
-    return render(request, "home/book.html", {"book_obj": book_obj})
+    return render(request, "home/book.html", context)
 
 
 # Add_Comment_To_Book
@@ -148,13 +155,19 @@ def log_in(request):
         user = authenticate(request, username=user.username, password=password)
 
         if user is not None:
-            request.session["verify_user"] = user.id
-            send_verification_code(user)
+            if user.profile.authentication:
+                request.session["verify_user"] = user.id
+                send_verification_code(user)
 
-            return redirect("verify_code")
+                return redirect("verify_code")
+            
+            else:
+                login(request, user)
+                return redirect("home")
+            
         else:
             return render(request, "home/login.html", {"error": "Incorrect email or password"})
-
+            
     return render(request, "home/login.html")
 
 
@@ -244,6 +257,7 @@ def account(request):
     message2 = request.session.pop("message2", None)
     message3 = request.session.pop("message3", None)
     message4 = request.session.pop("message4", None)
+    message5 = request.session.pop("message5", None)
 
     countries = [country.name for country in pycountry.countries]
 
@@ -254,6 +268,7 @@ def account(request):
         "message2": message2,
         "message3": message3,
         "message4": message4,
+        "message5": message5,
         "countries": countries
     }
     
@@ -331,6 +346,22 @@ def change_country(request):
     return redirect("account")
 
 
+# Authentication_Enable
+@login_required(login_url="login")
+def enable_authentication(request):
+    if request.method == "POST":
+        profile = request.user.profile
+        profile.authentication = not profile.authentication
+        profile.save()
+
+        if profile.authentication:
+            request.session["message5"] = "Two-factor authentication enabled!"
+        else:
+            request.session["message5"] = "Two-factor authentication disabled!"
+
+    return redirect("account")
+
+
 # Delete_Account
 @login_required(login_url="login")
 def delete_account(request):
@@ -342,13 +373,6 @@ def delete_account(request):
         return redirect("home")
     
     return redirect("account")
-
-
-# Book_Detail
-def book_detail(request, book_id):
-    book_obj = get_object_or_404(Book, id=book_id)
-
-    return render(request, "home/book.html", {"book_obj": book_obj})
 
 
 # Add_To_Cart

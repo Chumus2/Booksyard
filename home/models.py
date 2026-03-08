@@ -69,6 +69,7 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
     avatar = models.ImageField(upload_to="avatars/", default="avatars/default_profile_avatar.jpg")
     country = models.CharField(max_length=100, blank=True, null=True)
+    authentication = models.BooleanField(default=False)
     
     def __str__(self):
         return self.user.username
@@ -76,7 +77,7 @@ class Profile(models.Model):
 
 # Comment Data_Base
 class Comment(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="comment")
     book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name="comments")
     text = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)

@@ -88,6 +88,23 @@
     <p class="message">{{ message4 }}</p>
     {% endif %}
 
+    <div>
+
+        <h2>2-factor authentication: {% if user_obj.profile.authentication %}Enabled{% else %}Disabled{% endif %}</h2>
+
+        <form method="post" action="{% url 'enable_authentication' %}">
+            {% csrf_token %}
+
+            <input type="checkbox" name="authentication"
+            {% if user_obj.profile.authentication %}checked{% endif %}
+            onchange="this.form.submit()">
+            Enable 2-factor authentication (Email verification on login)
+        </form>
+
+        <small>When enabled, you'll receive a verification code via email each time you log in.</small>
+
+    </div>
+
     <a href="{% url 'log_out' %}">
         <button type="button">Log out</button>
     </a>

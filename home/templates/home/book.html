@@ -9,85 +9,119 @@
 
 {% block content %}
 
-<div>
-
-    <img src="{{ book_obj.cover.url }}" alt="{{ book_obj.book_name }}">
-
-    <div>
-
-        <div>
-
-            <h1>{{ book_obj.book_name }}</h1>
-            <p>{{ book_obj.author }}</p>
-
-            <h3>Language: {{ book_obj.language }}</h3>
-            <h3>Type: {{ book_obj.type }}</h3>
-            <p>Published: {{ book_obj.date|date:"F Y" }}</p>
-
-            <p>{{ book_obj.description }}</p>
-
+<div id="Book_Container">
+    <div id="Book_Main">
+        
+        <div id="Book_Cover">
+            <img src="{{ book_obj.cover.url }}" alt="{{ book_obj.book_name }}">
         </div>
 
-        <div>
+        <div id="Book_Info">
+            <div id="Book_Details">
 
-            <h1>{{ book_obj.price }}€</h1>
+                <h1>{{ book_obj.book_name }}</h1>
+                <p id="Book_Author">{{ book_obj.author }}</p>
 
-            <form method="post" action="{% url 'add_to_cart' book_obj.id %}">
-                {% csrf_token %}
+                <div id="Meta_Info">
+                    <p><span>Language:</span> {{ book_obj.language }}</p>
+                    <p><span>Type:</span> {{ book_obj.type }}</p>
+                    <p><span>Published:</span> {{ book_obj.date|date:"F Y" }}</p>
+                </div>
 
-                <button type="button" onclick="add_Quantity(-1)">-</button>
-                <input type="text" name="quantity" id="quantity" value="1" min="1" readonly>
-                <button type="button" onclick="add_Quantity(1)">+</button>
+                <p id="Book_Description">{{ book_obj.description }}</p>
 
-                <button type="submit">Add to cart</button>
-            </form>
+            </div>
+
+            <div id="Book_Purchase">
+
+                <h2 id="Book_Price">{{ book_obj.price }}€</h2>
+
+                <form method="post" action="{% url 'add_to_cart' book_obj.id %}">
+                    {% csrf_token %}
+
+                    <div id="Quantity_Controls">
+                        <button type="button" onclick="add_Quantity(-1)">-</button>
+                        <input type="text" name="quantity" id="quantity" value="1" min="1" readonly>
+                        <button type="button" onclick="add_Quantity(1)">+</button>
+                    </div>
+
+                    <button type="submit" id="Add_To_Cart_Btn">Add to cart</button>
+
+                </form>
+
+            </div>
 
         </div>
 
     </div>
 
-    <div>
+    <div id="Content_Row">
+        <div id="Comments_Section">
 
-        <div>
-
-            <h3>Comments:</h3>
-
-            {% for comment in book_obj.comments.all %}
+            <h3>Comments</h3>
             
-            <div class="User_Comment">
+            {% for comment in comments %}
+            <div id="Comment_Item_{{ comment.id }}" class="Comment_Item">
 
-                <img src="{{ comment.user.profile.avatar.url|default:'/media/avatars/default.jpg' }}" width="40" height="40">
-                <p><strong>{{ comment.user.username }}:</strong> {{ comment.text }} ({{ comment.created_at }})</p>
+                <img src="{{ comment.user.profile.avatar.url|default:'/media/avatars/default.jpg' }}" alt="avatar" width="50" height="50">
+                <div id="Comment_Content_{{ comment.id }}" class="Comment_Content">
 
-                <div>
+                    <strong>{{ comment.user.username }}</strong>
+                    <p>{{ comment.text }}</p>
+                    <small>{{ comment.created_at }}</small>
 
-                    {% if request.user == comment.user %}
-                    <a href="{% url 'edit_comment' comment.id %}">
-                        <button type="button">Edit</button>
-                    </a>
+                </div>
+                
+                {% if request.user == comment.user %}
+                <div id="Comment_Actions_{{ comment.id }}" class="Comment_Actions">
+
+                    <a href="{% url 'edit_comment' comment.id %}" id="Edit_Btn_{{ comment.id }}" class="Edit_Btn">Edit</a>
 
                     <form method="post" action="{% url 'delete_comment' comment.id %}">
                         {% csrf_token %}
-                        <button type="submit">Delete</button>
+                        <button type="submit" id="Delete_Btn_{{ comment.id }}" class="Delete_Btn">Delete</button>
                     </form>
-                    {% endif %}
 
                 </div>
-
-                {% empty %}
-                <p>No comments yet.</p>
+                {% endif %}
 
             </div>
 
+            {% empty %}
+            <p id="No_Comments">No comments yet</p>
             {% endfor %}
 
             {% if user.is_authenticated %}
-            <form method="post" action="{% url 'create_comment' book_obj.id %}">
+            <form method="post" action="{% url 'create_comment' book_obj.id %}" id="Comment_Form">
                 {% csrf_token %}
-                <textarea name="text" placeholder="Enter your comment..." rows="3"></textarea>
-                <button type="submit">Post</button>
+
+                <textarea name="text" placeholder="Write a comment..." rows="3" id="Comment_Text"></textarea>
+                <button type="submit" id="Post_Comment_Btn">Post</button>
+
             </form>
             {% endif %}
+
+        </div>
+
+        <div id="Activity_Feed">
+
+            <h3>Activity</h3>
+            
+            {% for user in active_users %}
+            <div id="Activity_Item_{{ user.id }}" class="Activity_Item">
+
+                <img src="{{ user.profile.avatar.url|default:'/media/avatars/default.jpg' }}" alt="avatar" width="50" height="50">
+                
+                <div id="Activity_Info_{{ user.id }}" class="Activity_Info">
+                    <strong>{{ user.username }}</strong>
+                    <span>commented</span>
+                </div>
+
+            </div>
+
+            {% empty %}
+            <p id="No_Activity">No activity yet</p>
+            {% endfor %}
 
         </div>
 
